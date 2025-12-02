@@ -1,4 +1,4 @@
-# food_run
+# 🏃 food run 🛒
 
 A full stack typescript web app that helps home cooks generate bulk grocery lists from online recipes and plan out their meal prep.
 
