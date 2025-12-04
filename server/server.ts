@@ -3,14 +3,20 @@ import type { Application, Request, Response, ErrorRequestHandler, NextFunction 
 import cors from "cors";  // allow cross-origin requests from the frontend
 
 
-// read the server port from the environment with a fallback
-const port = Number(process.env.SERVER_PORT) || 4000;
+// read the server port from the environment or fallback to default
+const port =  Number(process.env.PORT ?? process.env.SERVER_PORT ?? 4000);
 // create a new express application instance
 const app = express();
 
 
 // allow cross-origin requests from the vite dev server
-app.use(cors());
+app.use(cors({
+    origin: [
+      "http://localhost:5173",
+      "https://morrisxelijah.github.io",
+      "https://morrisxelijah.github.io/food_run",
+    ],
+}));
 // use built-in middleware to automatically parse json bodies
 app.use(express.json());
 

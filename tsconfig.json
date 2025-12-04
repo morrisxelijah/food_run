@@ -1,42 +1,51 @@
 {
     // defines how typescript compiles and checks code
     "compilerOptions": {
-      // set js version to latest
-      "target": "ESNext",
-      "module": "ESNext",
+        // set js version to latest
+        "target": "ESNext",
+        "module": "ESNext",
 
-      // tells typescript how to resolve imports
-      "moduleResolution": "node",
+        // makes JSX/DOM types are available (browser stuff)
+        "lib": ["ESNext", "DOM"],
 
-      // strictest type checking
-      "strict": true,
+        // tells typescript how to resolve imports
+        "moduleResolution": "node",
 
-      // using react and vite
-      "jsx": "react-jsx",
+        // strictest type checking
+        "strict": true,
 
-      // ensure no plain javascript files
-      "allowJs": false,
+        // using react and vite
+        "jsx": "react-jsx",
 
-      // reduce friction with imports that use commonjs (force esm like)
-      "esModuleInterop": true,
+        // ensure no plain javascript files
+        "allowJs": false,
 
-      // ensure file name casing matches on disk
-      "forceConsistentCasingInFileNames": true,
+        // reduce friction with imports that use commonjs (force esm like)
+        "esModuleInterop": true,
 
-      // skip type checking node_modules files
-      "skipLibCheck": true,
+        // ensure file name casing matches on disk
+        "forceConsistentCasingInFileNames": true,
 
-      // allow importing json files as modules when needed
-      "resolveJsonModule": true,
+        // skip type checking node_modules files
+        "skipLibCheck": true,
 
-      // base url for non-relative imports 
-      "baseUrl": ".",
+        // allow importing json files as modules when needed
+        "resolveJsonModule": true,
 
-      // which global type definitions to load
-      "types": ["vite/client", "node"]
+        // base url for non-relative imports 
+        "baseUrl": ".",
+
+        // which global type definitions to load
+        "types": ["vite/client", "node", "react", "react-dom"]
     },
 
   
     // which project files to check types for
-    "include": ["client", "server", "vitest.config.ts", "types.ts"]
+    "include": [
+        "client/**/*",
+        "server/**/*",
+        "types.ts",
+        "vite.config.ts",
+        "vitest.config.ts"
+    ]
 }
