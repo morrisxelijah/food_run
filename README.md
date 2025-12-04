@@ -56,6 +56,7 @@ At a high level, Food Run:
 
 ---
 
+
 ## Current focus (MVP)
 
 The current prototype is focused on building the core loop:
@@ -68,7 +69,47 @@ The current prototype is focused on building the core loop:
 
 ---
 
-## Potential Roadmap For The Future
+
+
+## Database Schema (MVP)
+
+```mermaid
+erDiagram
+    RECIPES {
+        uuid id PK
+        text title
+        text source_url
+        int servings
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    INGREDIENTS {
+        uuid id PK
+        text name
+        text canonical_name
+        text default_unit
+        timestamptz created_at
+    }
+
+    RECIPE_INGREDIENTS {
+        uuid id PK
+        uuid recipe_id FK
+        uuid ingredient_id FK
+        numeric amount
+        text unit
+        text notes
+        timestamptz created_at
+    }
+
+    RECIPES ||--o{ RECIPE_INGREDIENTS : "has many"
+    INGREDIENTS ||--o{ RECIPE_INGREDIENTS : "used in"
+```
+
+
+---
+
+## Feature Roadmap
 
 Food Run is intentionally scoped as a prototype with clear next steps:
 
