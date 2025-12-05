@@ -9,7 +9,7 @@
     "dev:server": "nodemon --watch server --ext ts --exec \"ts-node -P tsconfig.server.json server/server.ts\"",
     "dev:client": "vite --host",
     "dev": "npm run type-check && concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "start": "NODE_ENV=production node server-build/server.js",
+    "start": "NODE_ENV=production node server-build/server/server.js",
     "test": "vitest"
   },
   "dependencies": {

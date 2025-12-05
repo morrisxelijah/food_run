@@ -2,9 +2,8 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "module": "commonjs",
-        "rootDir": "server",
         "outDir": "server-build",
         "noEmit": false
     },
-    "include": ["server/**/*"]
+    "include": ["server/**/*", "types.ts"]
 }
