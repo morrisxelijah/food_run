@@ -15,3 +15,6 @@ server-build/
 .env
 .env.production
 .env.development
+
+# not used right now
+supabase.config.ts
