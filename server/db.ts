@@ -11,10 +11,11 @@ import dotenv from "dotenv";  // load env variables
 // }
 
 
-// load .env.development to make the vars available  -->  production comes from render dashboard env settings
-if (process.env.NODE_ENV !== "production") {
-    // this makes DATABASE_URL, SERVER_PORT, etc. available on process.env
-    dotenv.config({ path: ".env.development", });
+// load .env to make the variables available
+if (process.env.NODE_ENV === "production") {
+    dotenv.config({ path: ".env.production" });  // also in render dashboard env settings  -->  useful for for local prod-like runs
+} else {
+    dotenv.config({ path: ".env.development" });
 }
 
 
@@ -23,7 +24,7 @@ const databaseUrl = process.env.DATABASE_URL
 // missing variable ?  -->  log a warning so it is obvious during boot
 if (!databaseUrl) {
     console.warn(
-        "DATABASE_URL is not set. the api will start, but any db queries will fail until you configure it."
+        "DATABASE_URL is not set. the api will start, but any db queries will fail until it's configure."
     );
 }
 
@@ -48,7 +49,7 @@ export async function query<T = unknown>(
     // error  -->  query() called without setting up the db first
     if (!dbPool) {
         throw new Error(
-            "database is not configured. set DATABASE_URL in your environment before handling requests."
+            "database is not configured. set environment DATABASE_URL (.env file) before handling requests."
         );
     }
 

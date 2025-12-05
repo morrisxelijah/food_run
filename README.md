@@ -1,8 +1,12 @@
-# 🏃  Food  Run  🛒
+# 🛒🏃  Food  Run
 
-> *Smart meal prep and grocery planning from the recipes you already love.*
+
+*Smart meal prep and grocery planning from the recipes you already love.*
+
 
 Food Run is a web app that helps home cooks turn a week’s worth of online recipes into a single, efficient bulk shopping trip. Paste in recipe links, confirm the ingredients, and Food Run will build a consolidated shopping list that respects your pantry, your portions, and (eventually) your budget.
+
+> ***Live Demo:***  [https://morrisxelijah.github.io/food_run/](https://morrisxelijah.github.io/food_run/)
 
 ---
 
@@ -57,7 +61,7 @@ At a high level, Food Run:
 ---
 
 
-## Current focus (MVP)
+## Current Focus (MVP)
 
 The current prototype is focused on building the core loop:
 
@@ -113,9 +117,14 @@ erDiagram
 
 Food Run is intentionally scoped as a prototype with clear next steps:
 
+- **Better UI / UX**
+
+  - Embed pictures for each recipe and each ingredient.
+  - Improve readability with spacing and styling.
 - **Smarter ingredient handling**
 
   - Recognize equivalent ingredients (e.g., “scallions” vs “green onions”).
+  - Recognize close substitutes (e.g., “flour tortillas” vs “corn tortillas”).
   - Handle unit conversions when combining items (cups, grams, ounces).
 - **Pantry-based recommendations**
 
@@ -129,7 +138,7 @@ Food Run is intentionally scoped as a prototype with clear next steps:
 - **Cost and calorie awareness**
 
   - Integrate pricing estimates using store-brand or average local prices.
-  - Provide rough calorie estimates per recipe and per weekly plan.
+  - Provide rough calorie + pricing estimates per recipe and per weekly plan.
 - **Personal and “inspired by” recipes**
 
   - Let users clone imported recipes and add their own spin.
@@ -138,3 +147,20 @@ Food Run is intentionally scoped as a prototype with clear next steps:
 
   - Basic authentication so users can persist recipes and pantry across devices.
   - Settings for dietary preferences or exclusions (e.g., vegetarian, nut-free).
+- **Offline, 3rd-Party Integrations, and Automations  (stretch)**
+
+  - Browser extension to add recipes to the database while browsing.
+  - Save most recent activities for offline use.
+  - Pintrest integration to add recipes from pinned collections to the database.
+  - Integrations with online grocery stores to add ingredients from planned recipes / meal prep to the cart.
+  - Integrations with fitness / wellness apps.
+
+---
+
+
+## Tech Stack
+
+- frontend  →  typescript, react, vite, vanilla html + css
+- backend  →  node, express, typescript
+- database  →  postgres (local for dev, supabase for prod)
+- testing  →  vitest

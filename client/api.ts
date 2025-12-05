@@ -1,5 +1,5 @@
 // import the shared health status type so the api function can be strongly typed
-import type { HealthStatus, RecipeSummary, Recipe } from "../types";
+import type { HealthStatus, RecipeSummary, Recipe, Ingredient, } from "../types";
 
 
 // grab base url from vite env variable or use local default
