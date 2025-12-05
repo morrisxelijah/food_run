@@ -161,6 +161,6 @@ Food Run is intentionally scoped as a prototype with clear next steps:
 ## Tech Stack
 
 - frontend  →  typescript, react, vite, vanilla html + css
-- backend  →  node, express, typescript
+- backend  →  node, express, typescript, cheerio
 - database  →  postgres (local for dev, supabase for prod)
 - testing  →  vitest

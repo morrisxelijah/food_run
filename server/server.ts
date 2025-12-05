@@ -3,6 +3,7 @@ import type { Application, Request, Response, ErrorRequestHandler, NextFunction 
 import cors from "cors";  // allow cross-origin requests from the frontend
 import { query, dbPool } from "./db";  // db connection + helper
 import type { RecipeSummary, Recipe, Ingredient } from "../types";
+import { parseRecipeFromUrl } from "./importService";  // basic scraper
 
 
 
@@ -36,6 +37,30 @@ function registerRoutes(app: Application) {
 
         // respond with 200 and the json payload
         response.status(200).json(payload);
+    });
+
+
+    // import preview  -->  accept a recipe url and return parsed title + ingredients
+    app.post("/import/preview", async (request: Request, response: Response, next: NextFunction) => {
+        const body = request.body as { url?: string };
+
+        // basic validation
+        if (!body.url) {
+            response.status(400).json({ error: "url is required." });
+            return;
+        }
+
+        try {
+            // delegate parsing to the import service
+            const parsed = await parseRecipeFromUrl(body.url);
+
+            response.status(200).json(parsed);
+
+        } catch (error) {
+            console.error("error parsing recipe url:", error);
+
+            next(error);  // let the global error handler format the final response
+        }
     });
 
 

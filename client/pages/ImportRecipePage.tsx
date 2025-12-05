@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import type { Ingredient } from "../../types";
-import { createRecipe } from "../api";
+import { parseRecipeFromUrl, createRecipe } from "../api";
 
 
 
@@ -14,6 +14,7 @@ interface EditableIngredient {
     name: string;  // ingredient name as typed by the user
     amount: string;  // string input, will be converted to number | null before sending
     unit: string; // string input, will be trimmed and converted to null when empty
+    notes: string;  // optional and usually blank for now
 }
 
 
@@ -38,6 +39,7 @@ function createEmptyIngredient(): EditableIngredient {
         name: "",
         amount: "",
         unit: "",
+        notes: "",
     };
 }
 
@@ -84,7 +86,7 @@ export default function ImportRecipePage() {
 
 
 
-    // step 1  -->  simulate parsing when the user clicks "parse ingredients"
+    // step 1  -->  parse when the user clicks "parse ingredients"
     const handleParseIngredients = async (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -104,37 +106,92 @@ export default function ImportRecipePage() {
         setIsParsing(true);
 
         try {
+            // log the raw + trimmed url for debugging in the browser console
+            console.log("[import] handleParseIngredients submitted");
+            console.log("[import] raw url:", recipeUrl);
+            console.log("[import] trimmed url:", trimmedUrl);
+
+            // log the domain we are about to parse so we can correlate with server-side logs/selectors
+            try {
+                const parsedUrl = new URL(trimmedUrl);
+                console.log("[import] parsing domain:", parsedUrl.hostname);
+            } catch {
+                console.warn("[import] unable to parse domain from url, continuing anyway");
+            }
+
             // if no title provided yet, try to infer something from the url path
             if (!recipeTitle.trim()) {
                 const inferredTitle = inferTitleFromUrl(trimmedUrl);
                 if (inferredTitle) {
                     setRecipeTitle(inferredTitle);
+                    console.log("[import] inferred title from url path:", inferredTitle);
                 }
             }
 
-            // for now, if no rows exist yet, seed with a couple of example rows
-            // this simulates "parsed but not yet confirmed" ingredients
-            setIngredientRows((current) => {
-                if (current.length > 0) {
-                    // already have rows (maybe user is re-parsing)  -->  keep them
-                    return current;
+            // call the real backend parser
+            console.log("[import] calling parseRecipeFromUrl...");
+            const parsed = await parseRecipeFromUrl(trimmedUrl);
+            console.log("[import] parseRecipeFromUrl response summary:", {
+                title: parsed.title,
+                servings: parsed.servings,
+                ingredientCount: parsed.ingredients.length,
+                sampleIngredients: parsed.ingredients.slice(0, 5),
+            });
+
+            // if user hasn't manually typed a title, prefer the parsed title from the backend
+            if (!recipeTitle.trim() && parsed.title && parsed.title.trim().length > 0) {
+                setRecipeTitle(parsed.title);
+                console.log("[import] applied parsed title:", parsed.title);
+            }
+
+            // if servings field is blank and parser returned a value, hydrate the input
+            if (!servings.trim() && parsed.servings !== null) {
+                setServings(String(parsed.servings));
+                console.log("[import] applied parsed servings:", parsed.servings);
+            }
+
+            // map parsed ingredients into editable rows for the UI
+            setIngredientRows(() => {
+                // map Ingredient[] into EditableIngredient[]
+                const mappedRows: EditableIngredient[] = parsed.ingredients.map(
+                    (ingredient: Ingredient) => {
+                        const amountString =
+                            ingredient.amount !== null && ingredient.amount !== undefined
+                                ? String(ingredient.amount)
+                                : "";
+
+                        return {
+                            id: createRowId(),
+                            name: ingredient.name ?? "",
+                            amount: amountString,
+                            unit: ingredient.unit ?? "",
+                            // optional for now  -->  not supported yeat
+                            notes: "",
+                        };
+                    }
+                );
+
+                // parser returned nothing ?  -->  keep the flow usable by seeding empty rows (manual input)
+                if (mappedRows.length === 0) {
+                    console.warn(
+                        "[import] parser returned no ingredients. seeding with empty rows so the user can type manually."
+                    );
+
+                    return [
+                        createEmptyIngredient(),
+                        createEmptyIngredient(),
+                    ];
                 }
 
-                return [
-                    {
-                        id: createRowId(),
-                        name: "",
-                        amount: "",
-                        unit: "",
-                    },
-                    {
-                        id: createRowId(),
-                        name: "",
-                        amount: "",
-                        unit: "",
-                    },
-                ];
+                console.log("[import] ingredientRows hydrated from parsed ingredients:", mappedRows);
+                return mappedRows;
             });
+
+        } catch (error) {
+            console.error("[import] error during parseRecipeFromUrl:", error);
+            setParseErrorMessage(
+                "unable to parse this recipe url right now. please check the link or try again."
+            );
 
         } finally {
             setIsParsing(false);
@@ -160,14 +217,10 @@ export default function ImportRecipePage() {
     };
 
 
-
-
     // helper  -->  add a new blank ingredient row
     const addIngredient = () => {
         setIngredientRows((current) => [...current, createEmptyIngredient()]);
     };
-
-
 
 
     // helper  -->  remove a specific ingredient row

@@ -88,3 +88,37 @@ export async function createRecipe(payload: {
     const data = (await response.json()) as Recipe;
     return data;
 }
+
+
+
+
+// shape of a recipe parsed from the site but not yet saved
+export interface ParsedRecipePreview {
+    title: string;
+    sourceUrl: string;
+    servings: number | null;
+    ingredients: Ingredient[];
+}
+
+
+
+
+// call the server-side parser to turn a url into a structured preview
+export async function parseRecipeFromUrl(url: string): Promise<ParsedRecipePreview> {
+    const endpoint = `${apiBaseUrl}/import/preview`;
+
+    const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`failed to parse recipe. status: ${response.status}`);
+    }
+
+    const data = (await response.json()) as ParsedRecipePreview;
+    return data;
+}
